@@ -1,0 +1,7 @@
+FROM debian:latest
+
+# Copie le fichier msg.txt dans /opt/msg.txt
+COPY msg.txt /opt/msg.txt
+
+# affiche le contenu
+CMD ["/bin/cat", "/opt/msg.txt"]

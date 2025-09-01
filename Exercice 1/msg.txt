@@ -1,0 +1,5 @@
+Hello World from msg.txt
+
+La réponse à la question : docker run --rm -v ${PWD}:/opt exercice-one
+
+
