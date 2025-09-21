@@ -1,0 +1,4 @@
+FROM debian:stable-slim
+WORKDIR /app
+COPY /msg.txt /app/msg.txt
+CMD ["bash", "-lc", "cat /app/msg.txt && sleep 3600"]

@@ -1,0 +1,12 @@
+name: exo2
+
+services:
+  web:
+    build:
+      context: ./image
+      dockerfile: dockerfile
+    container_name: exo2-web
+    ports:
+      - "127.0.0.1:3030:3030"   # <-- uniquement localhost
+    command: npm start
+    restart: unless-stopped

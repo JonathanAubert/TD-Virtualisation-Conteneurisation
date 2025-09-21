@@ -1,0 +1,43 @@
+name: exo4
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+services:
+  pg:
+    image: postgres:latest
+    container_name: exo4-pg
+    env_file: ./.env
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER:-john} -d ${POSTGRES_DB:-doe}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  debian_psql:
+    build:
+      context: .
+    # dockerfile par défaut: debian_psql/dockerfile (grâce au contexte)
+      dockerfile: debian_psql/dockerfile
+    container_name: exo4-debian-psql
+    env_file: ./.env
+    secrets:
+      - db_password
+    depends_on:
+      pg:
+        condition: service_healthy
+    # Objectif de l'énoncé: qu'il "s'arrête" après s'être connecté avec psql.
+    # On utilise PGPASSWORD (exigé), mais on le lit depuis le secret à la volée.
+    command:
+      - bash
+      - -lc
+      - |
+        export PGPASSWORD="$(cat /run/secrets/db_password)";
+        until pg_isready -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE"; do sleep 1; done;
+        psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" -c "SELECT 1;";
+        echo "Client done. Exiting 0."

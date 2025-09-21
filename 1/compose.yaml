@@ -1,0 +1,14 @@
+name: exo1
+
+configs:
+  hello_msg:
+    file: ./msg.txt
+
+services:
+  hello:
+    image: debian:stable-slim
+    command: ["bash","-lc","cat /configs/msg.txt && sleep infinity"]
+    configs:
+      - source: hello_msg
+        target: /configs/msg.txt
+    restart: unless-stopped
